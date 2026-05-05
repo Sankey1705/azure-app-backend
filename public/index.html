@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Azure App Demo</title>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: 60px auto; padding: 0 20px; }
+    input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
+    button { padding: 10px 20px; margin: 5px 5px 5px 0; border: none; border-radius: 6px; cursor: pointer; background: #0078d4; color: white; }
+    button:hover { background: #005fa3; }
+    #output { margin-top: 20px; padding: 14px; background: #f4f4f4; border-radius: 6px; min-height: 50px; word-break: break-all; }
+  </style>
+</head>
+<body>
+  <h2>Frontend → Backend → Storage</h2>
+
+  <input type="text" id="textInput" placeholder="Type something to upload..." />
+  <button onclick="upload()">Upload</button>
+  <button onclick="read()">Read</button>
+
+  <div id="output">Output will appear here...</div>
+
+  <script>
+    const BACKEND = 'http://localhost:3000';
+
+    async function upload() {
+      const text = document.getElementById('textInput').value;
+      if (!text) return alert('Please enter some text first.');
+      const res = await fetch(`${BACKEND}/upload`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      const data = await res.json();
+      document.getElementById('output').textContent = 'Uploaded: ' + data.content;
+    }
+
+    async function read() {
+      const res = await fetch(`${BACKEND}/read`);
+      const data = await res.json();
+      document.getElementById('output').textContent = 'Read: ' + (data.content || data.error);
+    }
+  </script>
+</body>
+</html>
